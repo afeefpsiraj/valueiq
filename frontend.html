@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ValueIQ</title>
+<style>
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #f1f4f9;
+    color: #111;
+    padding:40px;
+}
+
+
+
+
+.box input {
+    width:100%;
+    padding:14px 16px;
+    font-size:16px;
+    border-radius:10px;
+    border:1px solid #cfd8e3;
+    background:#f8fafc;
+}
+
+
+
+
+
+
+input {
+    width:220px;
+    padding:12px;
+    background:#f8fafc;
+    border:1px solid #cfd8e3;
+    border-radius:12px;
+    font-size:14px;
+}
+
+
+
+button {
+    padding:12px 22px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    cursor:pointer;
+    border-radius:10px;
+    font-weight:600;
+}
+button:hover {
+    background:#1d4ed8;
+}
+
+
+
+
+#fcff-section,
+#fcfe-section,
+#sensitivity-section {
+    display: none;
+    background:#ffffff;
+    padding:24px;
+    border-radius:14px;
+    margin-top:28px;
+    border:1px solid #e3e8f0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+#debug-section {
+    background:#f8fafc;
+    border:1px dashed #cfd8e3;
+    color:#444;
+    box-shadow:none;
+}
+
+
+h1, h2, h3 {
+    letter-spacing: -0.3px;
+}
+h1 {
+    font-size:30px;
+    text-align:center;
+    margin-bottom:6px;
+}
+h2 {
+    margin-top:24px;
+}
+
+#dropdown {
+    position:absolute;
+    top:46px;
+    left:0;
+    width:100%;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    max-height:260px;
+    overflow-y:auto;
+    display:none;
+    z-index:9999;
+}
+
+
+
+#dropdown div {
+    padding:10px 14px;
+    font-size:14px;
+    cursor:pointer;
+    border-bottom:1px solid #f1f5f9;
+}
+
+#dropdown div:hover {
+    background:#eff6ff;
+}
+
+
+
+
+.info-table {
+    width: 100%;
+    margin: 16px auto;
+    border-collapse: collapse;
+    font-size: 14px;
+    table-layout: fixed;
+}
+
+
+.info-table td {
+    width: 50%;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-table td:first-child {
+    font-weight: 600;
+    color: #374151;
+}
+
+.info-table td:last-child {
+    text-align: right;
+    font-weight: 500;
+}
+
+
+
+/* Tables */
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+th {
+    background:#f3f6fb;
+    font-weight:600;
+}
+
+td {
+    background:#ffffff;
+}
+
+tr:nth-child(even) td {
+    background:#fafcff;
+}
+
+
+/* Scroll only if a table becomes wider than screen */
+.table-wrapper {
+    width:100%;
+    overflow-x:auto;
+}
+
+#result div {
+    line-height:1.5;
+}
+
+div[style*="₹${Number(result.intrinsic_value_per_share).toFixed(2)}"] {
+    transition: all 0.2s;
+}
+div[style*="₹${Number(result.intrinsic_value_per_share).toFixed(2)}"]:hover {
+    background:#2563eb;
+    color:white;
+    border-color:#1d4ed8;
+}
+
+.cashflow-table {
+    width: 100%;
+    max-width: 720px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.cashflow-table th {
+    background: #f1f5f9;
+    padding: 12px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.cashflow-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cashflow-table td:first-child {
+    font-weight: 600;
+    color: #374151;
+}
+
+.cashflow-table td:nth-child(2),
+.cashflow-table td:nth-child(3) {
+    text-align: center;
+    font-weight: 500;
+}
+
+.valuation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 15px; /* bigger, readable */
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.valuation-table th {
+    background: #f5f7fb;
+    font-weight: 600;
+    padding: 14px 12px;
+    text-align: center;
+    border-bottom: 1px solid #e3e7ef;
+}
+
+.valuation-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #eef1f6;
+}
+
+/* Metric / Year labels */
+.valuation-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+/* NUMBERS → CENTER (like cash flow drivers) */
+.valuation-table td:not(:first-child) {
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Hover polish */
+.valuation-table tr:hover {
+    background: #f9fbff;
+}
+
+.table-card {
+    background: #ffffff;
+    border: 1px solid #e3e8f0;
+    border-radius: 14px;
+    margin: 22px auto;
+    max-width: 720px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.table-card-title {
+    background: #f3f6fb;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid #e3e8f0;
+    color: #111827;
+}
+
+/* Remove extra spacing when tables are inside card */
+.table-card table {
+    margin: 0;
+}
+
+.sensitivity-wide {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* ===== FCFF / FCFE Valuation Summary ===== */
+
+.valuation-summary {
+    max-width: 720px;
+    margin: 20px auto 0;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 14px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: #374151;
+}
+
+.summary-row.bold {
+    font-weight: 600;
+}
+
+.summary-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 10px 0;
+}
+
+.summary-highlight {
+    margin-top: 14px;
+    padding: 12px;
+    background: #eef2ff;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+    color: #1e3a8a;
+}
+
+.debug-card {
+    max-width: 420px;
+    margin: 18px auto;
+    padding: 18px 20px;
+    background: #f8fafc;
+    border: 1px dashed #cfd8e3;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.debug-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #374151;
+}
+
+.debug-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    color: #374151;
+}
+
+.debug-row span:last-child {
+    font-weight: 600;
+}
+
+.tagline {
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* ===== Disclaimer & Notes ===== */
+
+.disclaimer-section {
+    max-width: 100%;
+    margin: 40px auto 0;
+    padding: 24px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    font-size: 14px;
+    color: #374151;
+    display: none;
+}
+
+.disclaimer-section h3 {
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.disclaimer-section p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.disclaimer-section ul {
+    padding-left: 18px;
+}
+
+.disclaimer-section li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<h1>ValueIQ – Stock Valuation Tool</h1>
+<div class="tagline">
+    “Price is what you pay, value is what you get.” — Warren Buffett
+</div>
+
+<div class="box">
+    <div class="search-row">
+        <div style="position:relative; width:100%; max-width:600px; margin:0 auto;">
+            <input id="symbol" placeholder="Type company or symbol...">
+            <div id="dropdown"></div>
+        </div>
+        
+        <div style="text-align:center; margin-top:16px;">
+            <button onclick="fetchAndCalculate()">Calculate</button>
+        </div>        
+</div>
+
+<h2 id="result"></h2>
+
+
+
+<!-- FCFF Section -->
+<div id="fcff-section">
+    <div class="table-card-title" style="display:flex; justify-content:space-between;">
+        <span>FCFF Model</span>
+        <span style="font-size:12px; color:#aaa;">(in ₹ Cr.)</span>
+    </div>    
+    <div class="table-wrapper">
+        <table id="fcff-table"></table>
+    </div>
+    <div id="fcff-calculations"></div>
+</div>
+
+
+
+<!-- FCFE Section -->
+<div id="fcfe-section">
+    <div class="table-card-title" style="display:flex; justify-content:space-between;">
+        <span>FCFE Model</span>
+        <span style="font-size:12px; color:#aaa;">(in ₹ Cr.)</span>
+    </div>    
+    <div class="table-wrapper">
+        <table id="fcfe-table"></table>
+    </div>
+    <div id="fcfe-calculations"></div>
+</div>
+
+
+
+<!-- Sensitivity Section -->
+<div id="sensitivity-section">
+
+    <div class="table-card">
+        <div class="table-card-title">Sensitivity Analysis</div>
+    </div>
+
+    <div class="table-card sensitivity-wide">
+        <div class="table-card-title">Revenue Growth Sensitivity</div>
+        <div class="table-wrapper">
+            <table id="growth-table"></table>
+        </div>
+    </div>
+
+    <div class="table-card sensitivity-wide">
+        <div class="table-card-title" id="margin-sensitivity-title"></div>
+        <div class="table-wrapper">
+            <table id="margin-table"></table>
+        </div>
+    </div>
+
+    <div class="table-card sensitivity-wide">
+        <div class="table-card-title">WACC Sensitivity</div>
+        <div class="table-wrapper">
+            <table id="wacc-table"></table>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="disclaimer-section">
+
+    <h3>Disclaimer</h3>
+    <p>
+        This valuation tool is intended strictly for educational and informational purposes.
+        The outputs generated should not be considered as financial, investment, or trading advice.
+        Users are strongly advised not to make investment decisions solely based on the results of this tool.
+    </p>
+    <p>
+        Most metrics and assumptions used in this model are derived from historical financial data,
+        which may not accurately reflect future performance.
+        <b>Past performance does not guarantee future returns.</b>
+    </p>
+
+    <h3>Notes</h3>
+    <ul>
+        <li>This valuation tool is built on a conservative framework.</li>
+        <li>Revenue growth is capped at 15% if the last 3-year Revenue CAGR exceeds this threshold. Similar validation checks and caps are applied to cash flow drivers such as margins, capex, depreciation, and working capital to avoid overstated assumptions.</li>
+        <li>Discounted Cash Flow (DCF) valuation is used to estimate intrinsic value.</li>
+        <li>FCFF is used for Non-Banking companies, while FCFE is used for Banking and NBFCs by default.</li>
+        <li>If valuation results fall outside sanity boundaries, model selection may change automatically.</li>
+        <li>If both FCFF and FCFE generate unreasonable outputs, Book Value per Share is used as a fallback.</li>
+        <li>Base revenue is taken from the latest reported financial year ended March.</li>
+        <li>Cost of Equity is fixed at 12% assuming Beta = 1, Risk-free rate = 4%, and ERP = 8%.</li>
+        <li>Post-tax Cost of Debt is fixed at 8%.</li>
+        <li>
+            Cash flow drivers such as Depreciation & Amortisation, Capex, and Change in Net Working Capital
+            are calculated using the median and mean of the last four years of historical data.
+        </li>
+    </ul>
+
+</div>
+
+
+
+<script>
+
+    function formatRaw(num) {
+        if (num === null || num === undefined) return "-";
+        num = Number(num);
+        if (isNaN(num)) return "-";
+        return num.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+    }
+
+    
+    window.onload = function () {
+    const input = document.getElementById("symbol");
+    const dropdown = document.getElementById("dropdown");
+
+    async function searchCompany() {
+        const query = input.value.trim();
+        if (query.length < 1) { dropdown.style.display="none"; return; }
+
+        const res = await fetch(`/search?q=${query}`);
+        const data = await res.json();
+        dropdown.innerHTML = "";
+        if (!data.length) { dropdown.style.display="none"; return; }
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.style.padding="6px";
+            div.style.cursor="pointer";
+            div.style.borderBottom = "1px solid #f1f5f9";
+            div.innerHTML=`<b>${item.symbol}</b> - ${item.name}`;
+            div.onclick=()=>{ input.value=`${item.name} (${item.symbol})`; dropdown.style.display="none"; };
+            dropdown.appendChild(div);
+        });
+        dropdown.style.display="block";
+    }
+
+    input.addEventListener("input", searchCompany);
+    document.addEventListener("click", e => { if(!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display="none"; });
+};
+
+async function fetchAndCalculate() {
+    let raw = document.getElementById("symbol").value.trim();
+    let symbol = raw;
+
+    // Extract symbol from last (...) if present
+    const match = raw.match(/\(([^()]+)\)\s*$/);
+    if (match) {
+        symbol = match[1];
+    }
+
+    symbol = symbol.toUpperCase();
+    if (!symbol) { alert("Enter a symbol"); return; }
+
+    const response = await fetch("/value", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({symbol})
+    });
+    const result = await response.json();
+    if(result.error) { alert(result.message); return; }
+
+    let valuationTag = result.upside_percent > 0 ? "🟢 Undervalued" : "🔴 Overvalued";
+
+    document.getElementById("result").innerHTML=`
+        <hr>
+        <h2 style="
+            font-size:22px; 
+            font-weight:600; 
+            text-align:center; 
+            margin-bottom:8px;
+        ">
+            ${result.company_name} (${symbol})
+        </h2>
+
+        <div style="text-align:center; margin-bottom:16px; line-height:1.6;">
+            <div style="font-weight:600; font-size:16px; color:#555;">Valuation Summary</div>
+            <div style="font-size:15px; color:#666;">Model Used: ${result.model_used}</div>
+        </div>
+
+
+        <!-- Fair Value Section -->
+        <div style="text-align:center; margin:16px 0;">
+            <!-- Label above number -->
+            <div style="font-size:14px; color:#555; margin-bottom:6px;">
+                Intrinsic / Fair Value
+            </div>
+
+            <!-- Big number box -->
+            <div style="
+                display:inline-block;
+                font-weight:700;
+                color:#2563eb;
+                font-size:26px;
+                padding:10px 20px;
+                border:2px solid #2563eb;
+                border-radius:8px;
+            ">
+                ₹${Number(result.intrinsic_value_per_share).toFixed(2)}
+            </div>
+        </div>
+
+
+
+
+        <div style="font-size:14px; color:#444; margin-top:8px; text-align:center;">
+            Current Market Price: ₹${result.current_price} <br>
+            Upside: ${result.upside_percent}% <br>
+            Status: ${valuationTag}
+        </div>
+
+
+        <!-- Debug / Comparison stacked lines, compact and auto-width -->
+        <div id="debug-section" style="
+            display:flex; 
+            flex-direction:column; 
+            align-items:center; 
+            max-width:400px; 
+            margin:16px auto; 
+            padding:16px 20px; 
+            border-radius:12px; 
+            font-size:16px; 
+            background:#f3f4f6; 
+            border:1px dashed #cfd8e3;
+        ">
+
+            <div style="font-weight:600; font-size:18px; text-align:center; margin-bottom:12px;">Debug Section</div>
+            
+            <div style="text-align:center; margin:4px 0;">
+                <span>FCFF / Share: </span>
+                <span>₹<span id="debug-fcff">-</span></span>
+            </div>
+            
+            <div style="text-align:center; margin:4px 0;">
+                <span>FCFE / Share: </span>
+                <span>₹<span id="debug-fcfe">-</span></span>
+            </div>
+            
+            <div style="text-align:center; margin:4px 0;">
+                <span>Book Value / Share: </span>
+                <span>₹<span id="debug-book">-</span></span>
+            </div>
+        </div>
+
+
+
+
+        <hr>
+
+
+        <div class="table-card">
+        <div class="table-card-title">Key Inputs</div>
+
+            <table class="info-table">
+                <colgroup>
+                    <col style="width:50%">
+                    <col style="width:50%">
+                </colgroup>
+
+                <tr><td>Revenue</td><td>₹${formatRaw(result.revenue)} Cr</td></tr>
+                <tr>
+                    <td>${result.is_financial ? "Net Margin Used (4Y Median)" : "Operating Margin Used (4Y Median)"}</td>
+                    <td>${(result.key_margin * 100).toFixed(2)}%</td>
+                </tr>
+                <tr><td>Revenue Growth Rate Used (3Y CAGR)</td><td>${(result.growth_rate*100).toFixed(2)}%</td></tr>
+                <tr><td>Discount Rate (WACC)</td><td>${(result.cost_of_capital.wacc*100).toFixed(2)}%</td></tr>
+                <tr><td>Terminal Growth Rate</td><td>${(result.terminal_growth*100).toFixed(2)}%</td></tr>
+                <tr><td>Book Value per Share</td><td>₹${result.book_value}</td></tr>
+                <tr><td>Total Shares Outstanding</td><td>${result.shares.toLocaleString()} Cr</td></tr>
+                <tr>
+                    <td>Cash & Cash Equivalents</td>
+                    <td>₹${Number(result.cash).toLocaleString("en-IN",{maximumFractionDigits:2})} Cr</td>
+                </tr>
+            </table>
+        </div>
+
+
+
+
+        <div class="table-card">
+            <div class="table-card-title">Capital Structure</div>
+
+            <table class="info-table">
+                <colgroup>
+                    <col style="width:50%">
+                    <col style="width:50%">
+                </colgroup>
+
+                <tr><td>Debt</td><td>₹<span id="debt"></span> Cr</td></tr>
+                <tr><td>Equity</td><td>₹<span id="equity"></span> Cr</td></tr>
+                <tr><td>Weight of Debt</td><td><span id="w_debt"></span>%</td></tr>
+                <tr><td>Weight of Equity</td><td><span id="w_equity"></span>%</td></tr>
+            </table>
+        </div>
+
+
+
+        <div class="table-card">
+            <div class="table-card-title">Cost of Capital</div>
+
+            <table class="info-table">
+                <colgroup>
+                    <col style="width:50%">
+                    <col style="width:50%">
+                </colgroup>
+
+                <tr><td>Cost of Debt (post-tax)</td><td>8%</td></tr>
+                <tr><td>Cost of Equity</td><td>12%</td></tr>
+                <tr><td><b>WACC</b></td><td><b><span id="wacc"></span>%</b></td></tr>
+            </table>
+        </div>
+
+
+
+        <div class="table-card">
+            <div class="table-card-title">Cash Flow Drivers</div>
+
+            <table class="cashflow-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>Amount (₹ Cr)</th>
+                    <th>% of Revenue</th>
+                </tr>
+                <tr>
+                    <td>Revenue (4Y Median)</td>
+                    <td id="cf-revenue-median">-</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Depreciation & Amortisation (4Y Median)</td>
+                    <td id="cf-depreciation">-</td>
+                    <td id="cf-dep-pct">-</td>
+                </tr>
+                <tr>
+                    <td>Capital Expenditure (4Y Median)</td>
+                    <td id="cf-capex">-</td>
+                    <td id="cf-capex-pct">-</td>
+                </tr>
+                <tr>
+                    <td>Change in Working Capital (3Y Mean)</td>
+                    <td id="cf-nwc">-</td>
+                    <td id="cf-nwc-pct">-</td>
+                </tr>
+            </table>
+        </div>
+
+
+    `;
+    
+
+    // Debug
+    if(result.debug){
+        document.getElementById("debug-fcff").innerText = result.debug.fcff_value || "-";
+        document.getElementById("debug-fcfe").innerText = result.debug.fcfe_value || "-";
+        document.getElementById("debug-book").innerText = result.debug.book_value || "-";
+        document.getElementById("debug-section").style.display="block";
+    }
+
+    document.getElementById("debug-section").style.display="block";
+
+    // ---------------- FCFF Table (ALWAYS build if exists) ----------------
+    if(result.fcff_model && result.fcff_model.table) {
+
+    const fcffSection = document.getElementById("fcff-section");
+    const fcffTable = document.getElementById("fcff-table");
+    fcffTable.classList.add("valuation-table");
+    const fcffCalc = document.getElementById("fcff-calculations");
+
+    fcffTable.innerHTML = "";
+
+    // Header
+    const header = document.createElement("tr");
+    header.innerHTML = "<th>Metric</th>" + 
+        result.fcff_model.table.years.map(y => `<th>${y}</th>`).join("");
+    fcffTable.appendChild(header);
+
+    // Rows
+    for (let metric in result.fcff_model.table.rows) {
+
+    const row = document.createElement("tr");
+
+    // --- label tweak ---
+    let label = metric;
+    if (
+        metric === "Operating Margin" ||
+        metric === "Tax Rate" ||
+        metric === "Discount Factor"
+    ) {
+        label = `${metric} (%)`;
+    }
+
+    row.innerHTML =
+        `<td><b>${label}</b></td>` +
+        result.fcff_model.table.rows[metric].map(v => {
+
+            if (metric === "Discount Factor") {
+                return `<td>${Number(v).toFixed(4)}</td>`;
+            }
+
+            if (metric === "Operating Margin" || metric === "Tax Rate") {
+                return `<td>${(Number(v) / 100).toFixed(2)}</td>`;
+            }
+
+            if (metric === "Present Value of FCFF") {
+                return `<td style="font-weight:700;color:#2563eb">${formatRaw(v)}</td>`;
+            }
+
+            return `<td>${formatRaw(v)}</td>`;
+        }).join("");
+
+    fcffTable.appendChild(row);
+    }
+
+
+    // Calculations
+    fcffCalc.innerHTML = `
+        <div class="valuation-summary">
+            <div class="summary-row">
+                <span>Sum of PV of FCFF</span>
+                <span>₹${formatRaw(result.fcff_model.sum_pv_fcFF)} Cr</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Terminal Value</span>
+                <span>₹${formatRaw(result.fcff_model.terminal_value)} Cr</span>
+            </div>
+
+            <div class="summary-row">
+                <span>PV of Terminal Value</span>
+                <span>₹${formatRaw(result.fcff_model.pv_terminal_value)} Cr</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row bold">
+                <span>Enterprise Value</span>
+                <span>₹${formatRaw(result.fcff_model.enterprise_value)} Cr</span>
+            </div>
+
+            <div class="summary-row bold">
+                <span>Equity Value</span>
+                <span>₹${formatRaw(result.fcff_model.equity_value)} Cr</span>
+            </div>
+
+            <div class="summary-highlight">
+                Equity Value / Share: <strong>₹${Number(result.fcff_model.equity_value_per_share).toFixed(2)}</strong>
+            </div>
+        </div>
+    `;
+
+
+    fcffSection.style.display = "block";
+    } else {
+    document.getElementById("fcff-section").style.display = "none";
+    }
+
+    // ---------------- FCFE Table ----------------
+    if(result.fcfe_model && result.fcfe_model.table) {
+
+        const fcfeSection = document.getElementById("fcfe-section");
+        const fcfeTable = document.getElementById("fcfe-table");
+        fcfeTable.classList.add("valuation-table");
+        const fcfeCalc = document.getElementById("fcfe-calculations");
+        fcfeTable.innerHTML="";
+
+        // Header
+        const header=document.createElement("tr");
+        header.innerHTML="<th>Metric</th>"+result.fcfe_model.table.years.map(y=>`<th>${y}</th>`).join("");
+        fcfeTable.appendChild(header);
+
+        // Rows
+        for (let metric in result.fcfe_model.table.rows) {
+
+            const row = document.createElement("tr");
+
+            // --- label tweak ---
+            let label = metric;
+            if (metric === "Discount Factor") {
+                label = "Discount Factor (%)";
+            }
+
+            row.innerHTML = `<td><b>${label}</b></td>` +
+            result.fcfe_model.table.rows[metric].map(v => {
+
+                if (metric === "Discount Factor") {
+                    return `<td>${Number(v).toFixed(4)}</td>`;
+                }
+
+                if (metric === "Net Margin (%)") {
+                    return `<td>${(Number(v) / 100).toFixed(2)}</td>`;
+                }
+
+                if (metric === "Present Value of FCFE") {
+                    return `<td style="font-weight:700;color:#2563eb">${formatRaw(v)}</td>`;
+                }
+
+                return `<td>${formatRaw(v)}</td>`;
+            }).join("");
+
+            fcfeTable.appendChild(row);
+        }
+
+
+        // Calculations
+        fcfeCalc.innerHTML = `
+            <div class="valuation-summary">
+                <div class="summary-row">
+                    <span>Sum of PV of FCFE</span>
+                    <span>₹${formatRaw(result.fcfe_model.sum_pv_fcFE)} Cr</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Terminal Value</span>
+                    <span>₹${formatRaw(result.fcfe_model.terminal_value)} Cr</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>PV of Terminal Value</span>
+                    <span>₹${formatRaw(result.fcfe_model.pv_terminal_value)} Cr</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row bold">
+                    <span>Equity Value</span>
+                    <span>₹${formatRaw(result.fcfe_model.equity_value)} Cr</span>
+                </div>
+
+                <div class="summary-highlight">
+                    Equity Value / Share: <strong>₹${Number(result.fcfe_model.equity_value_per_share).toFixed(2)}</strong>
+                </div>
+            </div>
+        `;
+
+
+        fcfeSection.style.display="block";
+        
+    }
+
+
+    // ---------------- Sensitivity ----------------
+    function buildTable(tableId, labels, values) {
+        const table = document.getElementById(tableId);
+        table.classList.add("valuation-table");
+        table.innerHTML = "";
+
+        // truncate if lengths mismatch
+        const len = Math.min(labels.length, values.length);
+
+        // Header
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+            "<th>Scenario</th>" +
+            labels.slice(0, len).map((l, i) => {
+                const isBase =
+                    l.toLowerCase().includes("base") ||
+                    Math.abs(Number(values[i]) - SENS_BASE) < 0.5;
+                return `<th style="${isBase ? 'background:#4da3ff;color:#000;font-weight:bold;border:2px solid #fff;' : ''}">${l}</th>`;
+            }).join("");
+        table.appendChild(tr);
+
+        // Values row
+        const row = document.createElement("tr");
+        row.innerHTML =
+            "<td>Value</td>" +
+            values.slice(0, len).map((v, i) => {
+                const isBase =
+                    labels[i].toLowerCase().includes("base") ||
+                    Math.abs(Number(v) - SENS_BASE) < 0.5;
+                return `<td style="${isBase ? 'background:#4da3ff;color:#000;font-weight:bold;border:2px solid #fff;' : ''}">₹${Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>`;
+            }).join("");
+        table.appendChild(row);
+    }
+
+
+
+    const SENS_BASE = Number(result.sensitivity_base_price);
+    // Revenue Growth
+    buildTable("growth-table",
+        result.sensitivity.growth.labels,
+        result.sensitivity.growth.values
+    );
+
+    // --- Margin Sensitivity (Dynamic for FCFF / FCFE) ---
+    let marginLabels = [...result.sensitivity.margin.labels];
+    let marginValues = [...result.sensitivity.margin.values];
+
+    // base margin actually used in valuation
+    const baseMargin = (result.key_margin * 100).toFixed(2) + "%";
+
+    // find closest matching label
+    let baseIndex = marginLabels.findIndex(l =>
+        Math.abs(parseFloat(l) - parseFloat(baseMargin)) < 0.01
+    );
+
+    // convert it into Base(...)
+    if (baseIndex !== -1) {
+        marginLabels[baseIndex] = `Base(${baseMargin})`;
+    }
+
+    // build table
+    buildTable("margin-table", marginLabels, marginValues);
+
+
+    // WACC
+    buildTable("wacc-table",
+        result.sensitivity.wacc.labels,
+        result.sensitivity.wacc.values
+    );
+    document.getElementById("sensitivity-section").style.display = "block";
+    // Show Disclaimer & Notes AFTER results are printed
+    const disclaimer = document.querySelector(".disclaimer-section");
+    if (disclaimer) {
+        disclaimer.style.display = "block";
+    }
+
+    let marginTitle = result.model_used === "FCFE" ? "Net Margin" : "Operating Margin";
+    document.getElementById("margin-sensitivity-title").innerText =
+        ` ${marginTitle} Sensitivity`;
+
+
+    // ---------------- NEW CAPITAL STRUCTURE DISPLAY ----------------
+    // Capital Structure display
+    document.getElementById("debt").innerText = formatRaw(result.capital_structure.debt);
+    document.getElementById("equity").innerText = formatRaw(result.capital_structure.equity);
+
+
+
+
+    // Weight percentages
+    document.getElementById("w_debt").innerText = (result.capital_structure.w_debt * 100).toFixed(2);
+    document.getElementById("w_equity").innerText = (result.capital_structure.w_equity * 100).toFixed(2);
+
+
+    // WACC
+    document.getElementById("wacc").innerText = (result.cost_of_capital.wacc*100).toFixed(2);
+
+    // ---------------- Cash Flow Drivers ----------------
+    if (result.cashflow_drivers) {
+        document.getElementById("cf-revenue-median").innerText =
+            `₹${formatRaw(result.cashflow_drivers.revenue_median)}`;
+
+        document.getElementById("cf-depreciation").innerText =
+            `₹${formatRaw(result.cashflow_drivers.depreciation)}`;
+
+        document.getElementById("cf-capex").innerText =
+            `₹${formatRaw(result.cashflow_drivers.capex)}`;
+
+        document.getElementById("cf-nwc").innerText =
+            `₹${formatRaw(result.cashflow_drivers.change_nwc)}`;
+
+        document.getElementById("cf-dep-pct").innerText =
+            result.cashflow_drivers.depreciation_pct.toFixed(2) + "%";
+
+        document.getElementById("cf-capex-pct").innerText =
+            result.cashflow_drivers.capex_pct.toFixed(2) + "%";
+
+        document.getElementById("cf-nwc-pct").innerText =
+            result.cashflow_drivers.nwc_pct.toFixed(2) + "%";
+    }
+
+
+
+}
+
+</script>
+
+</body>
+</html>
