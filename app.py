@@ -47,15 +47,36 @@ def safe(x):
         return 0
 
 def get_stock(symbol):
+    symbol = symbol.strip().upper()
+
     for suffix in [".NS", ".BO"]:
+        full_symbol = symbol + suffix
         try:
-            stock = yf.Ticker(symbol + suffix)
-            info = stock.info
-            if info and info.get("currentPrice"):
+            # Use download instead of .info (cloud-safe)
+            data = yf.download(
+                full_symbol,
+                period="1d",
+                progress=False,
+                threads=False
+            )
+
+            if data is not None and not data.empty:
+                stock = yf.Ticker(full_symbol)
+
+                # Build minimal info dict manually
+                info = {
+                    "symbol": full_symbol,
+                    "currentPrice": float(data["Close"].iloc[-1]),
+                    "longName": symbol
+                }
+
                 return stock, info
-        except:
-            pass
+
+        except Exception as e:
+            print("Symbol fetch failed:", full_symbol, e)
+
     return None, None
+
 
 def get_cash(stock):
     """
